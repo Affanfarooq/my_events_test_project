@@ -3,43 +3,57 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:my_events_test_project/app/core/network/dio_logging_interceptor.dart';
 import 'package:my_events_test_project/app/services/analytics_service.dart';
 import 'package:my_events_test_project/app/services/logging_service.dart';
 import 'package:my_events_test_project/app/services/storage_service.dart';
+import 'package:my_events_test_project/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:my_events_test_project/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:my_events_test_project/features/auth/repositories/auth_repository.dart';
 
 Future<void> init() async {
-  // --- Core Services ---
   
-  // Env variables
-  final reqresBaseUrl = dotenv.env['REQRES_BASE_URL'] ?? 'https_reqres.in_api';
-  final mockApiBaseUrl = dotenv.env['MOCKAPI_BASE_URL'] ?? ''; // Ye aapko set karna hoga
-
-  // Secure Storage
-  // 3rd party package
-  Get.put(const FlutterSecureStorage()); 
-  // Hamara wrapper
-  Get.lazyPut(() => StorageService()); 
-
-  // Logging & Analytics
   Get.lazyPut(() => LoggingService());
   Get.lazyPut(() => AnalyticsService());
   
-  // Connectivity
+  final reqresBaseUrl = dotenv.env['REQRES_BASE_URL'];
+  print('🔍 DEBUG: Loaded ReqRes URL: $reqresBaseUrl'); 
+  final String validReqResUrl = reqresBaseUrl ?? 'https://reqres.in/api';
+  
+  Get.put(const FlutterSecureStorage());
+  Get.lazyPut(() => StorageService());
   Get.lazyPut(() => Connectivity());
 
-  // Networking (Task: REST API Integration)
-  // Hum 2 Base URL (ReqRes aur MockAPI) ke liye Dio ke 2 instances register karengay
-  Get.put(
-    Dio(BaseOptions(baseUrl: reqresBaseUrl)),
-    tag: 'reqres', // Tag for Auth API
-  );
-  Get.put(
-    Dio(BaseOptions(baseUrl: mockApiBaseUrl)),
-    tag: 'mockapi', // Tag for Events API
-  );
-  // Hum inmein Interceptors (logging, error handling) baad mein add karengay
+  // --- Networking 
+  
+  // Create ReqRes Dio Instance WITH HEADERS
+  final reqResDio = Dio(BaseOptions(
+    baseUrl: validReqResUrl,
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': 'reqres-free-v1', 
+    },
+    connectTimeout: const Duration(seconds: 10),
+    receiveTimeout: const Duration(seconds: 10),
+  ));
+  
+  // Attach Interceptor
+  reqResDio.interceptors.add(DioLoggingInterceptor());
+
+  // Register Dio
+  Get.put(reqResDio, tag: 'reqres');
+
+  // --- MockAPI Setup ---
+  final mockApiDio = Dio(BaseOptions(
+    baseUrl: dotenv.env['MOCKAPI_BASE_URL'] ?? '',
+    connectTimeout: const Duration(seconds: 10),
+    receiveTimeout: const Duration(seconds: 10),
+  ));
+  mockApiDio.interceptors.add(DioLoggingInterceptor());
+  Get.put(mockApiDio, tag: 'mockapi');
 
   // --- Features ---
-  // Yahan hum har feature (Auth, Events) ke Repositories, Usecases, aur Controllers
-  // register karengay jab hum unhein banayengay.
+  // Auth Feature
+  Get.lazyPut<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl());
+  Get.lazyPut<AuthRepository>(() => AuthRepositoryImpl(remoteDataSource: Get.find()));
 }

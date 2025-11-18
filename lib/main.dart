@@ -10,9 +10,7 @@ import 'di_container.dart' as di;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  // Initialize Hive (for Caching)
   await Hive.initFlutter();
-  // Initialize Dependencies (Services, Repos, etc.)
   await di.init();
   runApp(const MyApp());
 }
