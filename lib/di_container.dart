@@ -10,6 +10,9 @@ import 'package:my_events_test_project/app/services/storage_service.dart';
 import 'package:my_events_test_project/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:my_events_test_project/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:my_events_test_project/features/auth/repositories/auth_repository.dart';
+import 'package:my_events_test_project/features/events/data/datasources/event_remote_datasource.dart';
+import 'package:my_events_test_project/features/events/data/repositories/event_repository_impl.dart';
+import 'package:my_events_test_project/features/events/domain/entities/repositories/event_repository.dart';
 
 Future<void> init() async {
   
@@ -53,7 +56,12 @@ Future<void> init() async {
   Get.put(mockApiDio, tag: 'mockapi');
 
   // --- Features ---
+
   // Auth Feature
   Get.lazyPut<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl());
   Get.lazyPut<AuthRepository>(() => AuthRepositoryImpl(remoteDataSource: Get.find()));
+  
+  // --- Feature: Events ---
+  Get.lazyPut<EventRemoteDataSource>(() => EventRemoteDataSourceImpl());
+  Get.lazyPut<EventRepository>(() => EventRepositoryImpl(remoteDataSource: Get.find()));
 }
