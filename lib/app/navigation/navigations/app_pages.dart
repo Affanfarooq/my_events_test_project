@@ -1,8 +1,9 @@
 import 'package:get/get.dart';
 import 'package:my_events_test_project/app/navigation/navigations/app_routes.dart';
 import 'package:my_events_test_project/features/auth/presentation/view/auth_screen.dart';
-import 'package:my_events_test_project/features/events/presentation/event_detail/controller/view/event_detail_screen.dart';
-import 'package:my_events_test_project/features/events/presentation/event_list/controller/view/event_list_screen.dart';
+import 'package:my_events_test_project/features/events/presentation/views/event_detail_screen.dart';
+import 'package:my_events_test_project/features/events/presentation/views/event_form_screen.dart';
+import 'package:my_events_test_project/features/events/presentation/views/event_list_screen.dart';
 import 'package:my_events_test_project/features/splash/presentation/view/splash_screen.dart';
 
 class AppPages {
@@ -14,5 +15,6 @@ class AppPages {
       name: AppRoutes.eventDetails,
       page: () => const EventDetailScreen(),
     ),
+    GetPage(name: AppRoutes.eventForm, page: () => const EventFormScreen()),
   ];
 }

@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:my_events_test_project/app/core/errors/failures.dart';
 import 'package:my_events_test_project/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:my_events_test_project/features/auth/repositories/auth_repository.dart';
+import 'package:my_events_test_project/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;

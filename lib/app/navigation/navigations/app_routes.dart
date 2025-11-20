@@ -3,4 +3,5 @@ class AppRoutes {
   static const String auth = '/auth';
   static const String home = '/home';
   static const String eventDetails = '/event-details';
+  static const String eventForm = '/event-form';
 }

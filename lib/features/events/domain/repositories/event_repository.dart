@@ -5,4 +5,7 @@ import 'package:my_events_test_project/features/events/domain/entities/event_ent
 abstract class EventRepository {
   Future<Either<Failure, List<EventEntity>>> getEvents({int page = 1, int limit = 10});
   Future<Either<Failure, EventEntity>> getEventDetails(String id);
+  Future<Either<Failure, EventEntity>> createEvent(EventEntity event);
+  Future<Either<Failure, EventEntity>> updateEvent(EventEntity event);
+  Future<Either<Failure, String>> uploadImage(String filePath);
 }

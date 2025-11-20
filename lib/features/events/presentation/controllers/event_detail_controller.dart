@@ -1,12 +1,12 @@
 import 'package:get/get.dart';
 import 'package:my_events_test_project/features/events/domain/entities/event_entity.dart';
-import 'package:my_events_test_project/features/events/domain/entities/repositories/event_repository.dart';
+import 'package:my_events_test_project/features/events/domain/repositories/event_repository.dart';
 
 class EventDetailController extends GetxController {
   final EventRepository _repository = Get.find<EventRepository>();
 
   var isLoading = true.obs;
-  var event = Rxn<EventEntity>(); 
+  var event = Rxn<EventEntity>();
 
   @override
   void onInit() {
@@ -31,6 +31,12 @@ class EventDetailController extends GetxController {
         isLoading.value = false;
       },
     );
+  }
+
+  void updateEventLocally(EventEntity updatedEvent) {
+    if (event.value?.id == updatedEvent.id) {
+      event.value = updatedEvent;
+    }
   }
 
   void registerForEvent() {

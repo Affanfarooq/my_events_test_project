@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_events_test_project/features/events/presentation/event_list/controller/event_list_controller.dart';
-import 'package:my_events_test_project/features/events/presentation/event_list/controller/widgets/event_card.dart';
-import 'package:my_events_test_project/features/events/presentation/event_list/controller/widgets/event_list_skeleton.dart';
+import 'package:my_events_test_project/app/navigation/navigations/app_routes.dart';
+import 'package:my_events_test_project/features/events/presentation/controllers/event_list_controller.dart';
+import 'package:my_events_test_project/features/events/presentation/widgets/event_card.dart';
+import 'package:my_events_test_project/features/events/presentation/widgets/event_list_skeleton.dart';
 
 class EventListScreen extends StatelessWidget {
   const EventListScreen({super.key});
@@ -34,19 +35,27 @@ class EventListScreen extends StatelessWidget {
 
           return ListView.builder(
             controller: controller.scrollController,
-            itemCount: controller.events.length + (controller.isMoreLoading.value ? 1 : 0),
+            itemCount:
+                controller.events.length +
+                (controller.isMoreLoading.value ? 1 : 0),
             itemBuilder: (context, index) {
               if (index == controller.events.length) {
-                return const Center(child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: CircularProgressIndicator(),
-                ));
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                );
               }
 
               return EventCard(event: controller.events[index]);
             },
           );
         }),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Get.toNamed(AppRoutes.eventForm),
+        child: const Icon(Icons.add),
       ),
     );
   }
