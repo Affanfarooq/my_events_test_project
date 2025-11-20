@@ -3,8 +3,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_events_test_project/app/core/theme/app_theme.dart';
-import 'package:my_events_test_project/app/navigation/navigations/app_pages.dart';
-import 'package:my_events_test_project/app/navigation/navigations/app_routes.dart';
+import 'package:my_events_test_project/app/navigation/app_pages.dart';
+import 'package:my_events_test_project/app/navigation/app_routes.dart';
 import 'di_container.dart' as di; 
 
 Future<void> main() async {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_events_test_project/app/navigation/navigations/app_routes.dart';
+import 'package:my_events_test_project/app/navigation/app_routes.dart';
 import 'package:my_events_test_project/app/services/storage_service.dart';
 import 'package:my_events_test_project/features/auth/domain/repositories/auth_repository.dart';
 

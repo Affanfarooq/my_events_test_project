@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:my_events_test_project/app/navigation/navigations/app_routes.dart';
+import 'package:my_events_test_project/app/navigation/app_routes.dart';
 import 'package:my_events_test_project/features/events/domain/entities/event_entity.dart';
 
 class EventCard extends StatelessWidget {

@@ -1,5 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:my_events_test_project/app/core/errors/failures.dart';
+import 'package:my_events_test_project/app/core/network/network_info.dart'; // Import NetworkInfo
+import 'package:my_events_test_project/features/events/data/datasources/event_local_datasource.dart'; // Import LocalDS
 import 'package:my_events_test_project/features/events/data/datasources/event_remote_datasource.dart';
 import 'package:my_events_test_project/features/events/data/models/event_model.dart';
 import 'package:my_events_test_project/features/events/domain/entities/event_entity.dart';
@@ -7,33 +9,78 @@ import 'package:my_events_test_project/features/events/domain/repositories/event
 
 class EventRepositoryImpl implements EventRepository {
   final EventRemoteDataSource remoteDataSource;
-  EventRepositoryImpl({required this.remoteDataSource});
+  final EventLocalDataSource localDataSource;
+  final NetworkInfo networkInfo;
+
+  EventRepositoryImpl({
+    required this.remoteDataSource,
+    required this.localDataSource,
+    required this.networkInfo,
+  });
 
   @override
   Future<Either<Failure, List<EventEntity>>> getEvents({
     int page = 1,
     int limit = 10,
   }) async {
-    try {
-      final events = await remoteDataSource.getEvents(page, limit);
-      return Right(events);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteEvents = await remoteDataSource.getEvents(page, limit);
+
+        // Cache: Save to Local DB, just only one page
+        if (page == 1) {
+          await localDataSource.cacheEvents(remoteEvents);
+        }
+
+        return Right(remoteEvents);
+      } catch (e) {
+        return Left(ServerFailure(e.toString()));
+      }
+    } else {
+      try {
+        // Offline: Fetch from Local DB
+        final localEvents = await localDataSource.getCachedEvents();
+
+        if (localEvents.isEmpty) {
+          return const Left(CacheFailure('No internet and no cached data'));
+        }
+
+        return Right(localEvents);
+      } catch (e) {
+        return const Left(CacheFailure('Error loading cache'));
+      }
     }
   }
 
   @override
   Future<Either<Failure, EventEntity>> getEventDetails(String id) async {
-    try {
-      final event = await remoteDataSource.getEventDetails(id);
-      return Right(event);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    if (await networkInfo.isConnected) {
+      try {
+        final event = await remoteDataSource.getEventDetails(id);
+        return Right(event);
+      } catch (e) {
+        return Left(ServerFailure(e.toString()));
+      }
+    } else {
+      try {
+        // Offline: Fetch from Local DB
+        final localEvent = await localDataSource.getCachedEventById(id);
+        if (localEvent != null) {
+          return Right(localEvent);
+        } else {
+          return const Left(CacheFailure("Event not found in cache"));
+        }
+      } catch (e) {
+        return const Left(CacheFailure("Error accessing local storage"));
+      }
     }
   }
 
   @override
   Future<Either<Failure, EventEntity>> createEvent(EventEntity event) async {
+    if (!await networkInfo.isConnected) {
+      return const Left(ServerFailure("No Internet Connection"));
+    }
     try {
       final eventModel = EventModel(
         id: event.id,
@@ -44,7 +91,6 @@ class EventRepositoryImpl implements EventRepository {
         imageUrl: event.imageUrl,
         price: event.price,
       );
-
       final result = await remoteDataSource.createEvent(eventModel);
       return Right(result);
     } catch (e) {
@@ -54,6 +100,9 @@ class EventRepositoryImpl implements EventRepository {
 
   @override
   Future<Either<Failure, EventEntity>> updateEvent(EventEntity event) async {
+    if (!await networkInfo.isConnected) {
+      return const Left(ServerFailure("No Internet Connection"));
+    }
     try {
       final eventModel = EventModel(
         id: event.id,
@@ -64,7 +113,6 @@ class EventRepositoryImpl implements EventRepository {
         imageUrl: event.imageUrl,
         price: event.price,
       );
-
       final result = await remoteDataSource.updateEvent(eventModel);
       return Right(result);
     } catch (e) {

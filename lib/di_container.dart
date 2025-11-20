@@ -3,19 +3,25 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_events_test_project/app/core/network/dio_logging_interceptor.dart';
+import 'package:my_events_test_project/app/core/network/network_controller.dart';
+import 'package:my_events_test_project/app/core/network/network_info.dart';
 import 'package:my_events_test_project/app/services/analytics_service.dart';
 import 'package:my_events_test_project/app/services/logging_service.dart';
 import 'package:my_events_test_project/app/services/storage_service.dart';
 import 'package:my_events_test_project/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:my_events_test_project/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:my_events_test_project/features/auth/domain/repositories/auth_repository.dart';
+import 'package:my_events_test_project/features/events/data/datasources/event_local_datasource.dart';
 import 'package:my_events_test_project/features/events/data/datasources/event_remote_datasource.dart';
+import 'package:my_events_test_project/features/events/data/models/event_model.dart';
 import 'package:my_events_test_project/features/events/data/repositories/event_repository_impl.dart';
 import 'package:my_events_test_project/features/events/domain/repositories/event_repository.dart';
-
-Future<void> init() async {
   
+Future<void> init() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(EventModelAdapter());
   Get.lazyPut(() => LoggingService());
   Get.lazyPut(() => AnalyticsService());
   
@@ -26,10 +32,11 @@ Future<void> init() async {
   Get.put(const FlutterSecureStorage());
   Get.lazyPut(() => StorageService());
   Get.lazyPut(() => Connectivity());
+  Get.lazyPut<NetworkInfo>(() => NetworkInfoImpl(Get.find()));
+  Get.put(NetworkController());
 
   // --- Networking 
   
-  // Create ReqRes Dio Instance WITH HEADERS
   final reqResDio = Dio(BaseOptions(
     baseUrl: validReqResUrl,
     headers: {
@@ -40,7 +47,7 @@ Future<void> init() async {
     receiveTimeout: const Duration(seconds: 10),
   ));
   
-  // Attach Interceptor
+  // Interceptor
   reqResDio.interceptors.add(DioLoggingInterceptor());
 
   // Register Dio
@@ -63,5 +70,8 @@ Future<void> init() async {
 
   // --- Feature: Events ---
   Get.lazyPut<EventRemoteDataSource>(() => EventRemoteDataSourceImpl());
-  Get.lazyPut<EventRepository>(() => EventRepositoryImpl(remoteDataSource: Get.find()));
+  Get.lazyPut<EventLocalDataSource>(() => EventLocalDataSourceImpl());
+  Get.lazyPut<EventRepository>(() => EventRepositoryImpl(remoteDataSource: Get.find(),
+        localDataSource: Get.find(),
+        networkInfo: Get.find(),));
 }

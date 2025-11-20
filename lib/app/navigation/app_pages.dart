@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:my_events_test_project/app/navigation/navigations/app_routes.dart';
+import 'package:my_events_test_project/app/navigation/app_routes.dart';
 import 'package:my_events_test_project/features/auth/presentation/view/auth_screen.dart';
 import 'package:my_events_test_project/features/events/presentation/views/event_detail_screen.dart';
 import 'package:my_events_test_project/features/events/presentation/views/event_form_screen.dart';
