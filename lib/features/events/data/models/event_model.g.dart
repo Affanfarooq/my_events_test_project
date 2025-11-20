@@ -24,13 +24,18 @@ class EventModelAdapter extends TypeAdapter<EventModel> {
       location: fields[4] as String,
       imageUrl: fields[5] as String,
       price: fields[6] as String,
+      attendeeCount: fields[7] as int,
+      isFavorite: fields[8] as bool,
+      organizerName: fields[9] as String,
+      latitude: fields[10] as double,
+      longitude: fields[11] as double,
     );
   }
 
   @override
   void write(BinaryWriter writer, EventModel obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -44,7 +49,17 @@ class EventModelAdapter extends TypeAdapter<EventModel> {
       ..writeByte(5)
       ..write(obj.imageUrl)
       ..writeByte(6)
-      ..write(obj.price);
+      ..write(obj.price)
+      ..writeByte(7)
+      ..write(obj.attendeeCount)
+      ..writeByte(8)
+      ..write(obj.isFavorite)
+      ..writeByte(9)
+      ..write(obj.organizerName)
+      ..writeByte(10)
+      ..write(obj.latitude)
+      ..writeByte(11)
+      ..write(obj.longitude);
   }
 
   @override

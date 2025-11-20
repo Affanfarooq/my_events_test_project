@@ -6,19 +6,26 @@ import 'package:my_events_test_project/features/events/presentation/controllers/
 import 'package:my_events_test_project/features/events/presentation/widgets/event_card.dart';
 import 'package:my_events_test_project/features/events/presentation/widgets/event_list_skeleton.dart';
 
+
 class EventListScreen extends StatelessWidget {
   const EventListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(EventListController());
+    final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor, 
       appBar: AppBar(
-        title: const Text('My Events'),
+        title: const Text('My Events', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: theme.scaffoldBackgroundColor,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: Icon(Icons.logout, color: Colors.white),
             onPressed: controller.logout,
           ),
         ],
@@ -27,33 +34,33 @@ class EventListScreen extends StatelessWidget {
         children: [
           const OfflineBanner(),
           Expanded(
-            
             child: RefreshIndicator(
+              color: theme.primaryColor,
               onRefresh: controller.fetchEvents,
               child: Obx(() {
-                if (controller.isLoading.value) {
-                  return const EventListSkeleton();
-                }
-            
+                if (controller.isLoading.value) return const EventListSkeleton();
+                
                 if (controller.events.isEmpty) {
-                  return const Center(child: Text('No events found'));
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.event_busy, size: 80, color: theme.disabledColor),
+                        const SizedBox(height: 16),
+                        Text('No events found', style: theme.textTheme.bodyLarge),
+                      ],
+                    ),
+                  );
                 }
             
                 return ListView.builder(
                   controller: controller.scrollController,
-                  itemCount:
-                      controller.events.length +
-                      (controller.isMoreLoading.value ? 1 : 0),
+                  physics: const BouncingScrollPhysics(), 
+                  itemCount: controller.events.length + (controller.isMoreLoading.value ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (index == controller.events.length) {
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
+                      return Center(child: Padding(padding: const EdgeInsets.all(16.0), child: CircularProgressIndicator(color: theme.primaryColor)));
                     }
-            
                     return EventCard(event: controller.events[index]);
                   },
                 );
@@ -62,9 +69,13 @@ class EventListScreen extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.toNamed(AppRoutes.eventForm),
-        child: const Icon(Icons.add),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: FloatingActionButton(
+          onPressed: () => Get.toNamed(AppRoutes.eventForm),
+          backgroundColor: theme.primaryColor.withBlue(600),
+          child: const Icon(Icons.add, color: Colors.white),
+        ),
       ),
     );
   }

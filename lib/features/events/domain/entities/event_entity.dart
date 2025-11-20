@@ -7,7 +7,12 @@ class EventEntity extends Equatable {
   final DateTime date;
   final String location;
   final String imageUrl;
-  final String price; 
+  final String price;
+  final int attendeeCount;
+  final bool isFavorite;
+  final String organizerName;
+  final double latitude;
+  final double longitude;
 
   const EventEntity({
     required this.id,
@@ -17,8 +22,13 @@ class EventEntity extends Equatable {
     required this.location,
     required this.imageUrl,
     required this.price,
+    this.attendeeCount = 0,
+    this.isFavorite = false,
+    this.organizerName = "Event Organizer",
+    this.latitude = 0.0,
+    this.longitude = 0.0,
   });
 
   @override
-  List<Object?> get props => [id, title, description, date, location, imageUrl, price];
+  List<Object?> get props => [id, title, description, date, location, imageUrl, price, attendeeCount, isFavorite];
 }

@@ -11,77 +11,177 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final w = MediaQuery.of(context).size.width;
     final h = MediaQuery.of(context).size.height;
+    final w = MediaQuery.of(context).size.width;
+    final isFav = event.isFavorite.obs;
+    final theme = Theme.of(context);
+    final isDark = Get.isDarkMode;
 
     return GestureDetector(
-      onTap: () {
-        Get.toNamed(AppRoutes.eventDetails, parameters: {'id': event.id});
-      },
+      onTap: () => Get.toNamed(AppRoutes.eventDetails, parameters: {'id': event.id}),
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: w * 0.04, vertical: h * 0.01),
+        margin: EdgeInsets.symmetric(horizontal: w * 0.04, vertical: h * 0.012),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          color: theme.cardColor,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: theme.dividerColor.withOpacity(0.1), 
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
+              color: theme.primaryColor.withOpacity(isDark ? 0.0 : 0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+              spreadRadius: -2,
+            )
           ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              child: CachedNetworkImage(
-                imageUrl: event.imageUrl,
-                height: h * 0.2,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(color: Colors.grey[200]),
-                errorWidget: (context, url, error) => const Icon(Icons.broken_image),
-              ),
+            Stack(
+              children: [
+                Hero(
+                  tag: 'event_img_${event.id}',
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
+                    child: CachedNetworkImage(
+                      imageUrl: event.imageUrl,
+                      height: h * 0.22,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) => Container(color: theme.colorScheme.surfaceContainerHighest),
+                      errorWidget: (_, __, ___) => Container(
+                          color: theme.colorScheme.surfaceContainerHighest, 
+                          child: const Icon(Icons.broken_image)),
+                    ),
+                  ),
+                ),
+
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.grey[900] : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        )
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          DateFormat('dd').format(event.date),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900, 
+                            fontSize: 18
+                          ),
+                        ),
+                        Text(
+                          DateFormat('MMM').format(event.date).toUpperCase(),
+                          style: TextStyle(
+                            color: isDark ? Colors.grey[400] : Colors.grey[800], 
+                            fontSize: 10, 
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Obx(() => Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.black54 : Colors.white.withOpacity(0.9),
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: Icon(
+                        isFav.value ? Icons.favorite : Icons.favorite_border,
+                        color: isFav.value ? Colors.red : Colors.grey,
+                        size: 22,
+                      ),
+                      onPressed: () => isFav.toggle(),
+                      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                      padding: EdgeInsets.zero,
+                    ),
+                  )),
+                ),
+
+                Positioned(
+                  bottom: 12,
+                  right: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [theme.primaryColor, theme.primaryColor.withBlue(200)],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.primaryColor.withOpacity(0.4), 
+                          blurRadius: 8, 
+                          offset: const Offset(0, 4)
+                        )
+                      ],
+                    ),
+                    child: Text(
+                      "\$${event.price}",
+                      style: const TextStyle(
+                        color: Colors.white, 
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            
+
             Padding(
-              padding: EdgeInsets.all(w * 0.03),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    DateFormat('MMM dd, yyyy • hh:mm a').format(event.date),
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: w * 0.035,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: h * 0.005),
-                  
-                  Text(
                     event.title,
-                    style: TextStyle(
-                      fontSize: w * 0.045,
-                      fontWeight: FontWeight.bold,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 17,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: h * 0.005),
+                  
+                  const SizedBox(height: 16),
                   
                   Row(
                     children: [
-                      Icon(Icons.location_on_outlined, size: w * 0.04, color: Colors.grey),
-                      SizedBox(width: w * 0.01),
+                      _buildInfoCapsule(
+                        context, 
+                        Icons.group, 
+                        "${event.attendeeCount} Going",
+                        Colors.blue, 
+                      ),
+                      const SizedBox(width: 10),
                       Expanded(
-                        child: Text(
+                        child: _buildInfoCapsule(
+                          context, 
+                          Icons.location_on, 
                           event.location,
-                          style: TextStyle(color: Colors.grey[600], fontSize: w * 0.035),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          Colors.orange, 
                         ),
                       ),
                     ],
@@ -91,6 +191,39 @@ class EventCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Helper to build those colored capsules
+  Widget _buildInfoCapsule(BuildContext context, IconData icon, String text, Color color) {
+    final theme = Theme.of(context);
+    final isDark = Get.isDarkMode;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        // Very light background of the accent color
+        color: color.withOpacity(isDark ? 0.15 : 0.08),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              text,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: isDark ? color.withOpacity(0.9) : Colors.black87,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }
