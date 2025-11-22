@@ -29,6 +29,7 @@ class AuthController extends GetxController {
     }
   }
 
+  /// Switches between Login and Signup modes.
   void toggleMode() {
     isLoginMode.value = !isLoginMode.value;
     formKey.currentState?.reset(); 
@@ -38,19 +39,22 @@ class AuthController extends GetxController {
     if (!formKey.currentState!.validate()) return;
 
     isLoading.value = true;
-    
+    // Determine which API method to call based on the current mode
     final result = isLoginMode.value
         ? await _authRepository.login(emailController.text, passwordController.text)
         : await _authRepository.register(emailController.text, passwordController.text);
 
     result.fold(
       (failure) {
+        // Handle Error
         isLoading.value = false;
         Get.snackbar('Error', failure.message, 
             backgroundColor: Colors.red.withOpacity(0.1), colorText: Colors.red);
       },
       (token) async {
+        // Handle Success: Save Token
         await _storageService.saveAuthToken(token);
+        // Save or Clear email based on 'Remember Me' checkbox
         if (rememberMe.value) {
           await _storageService.saveRememberMeEmail(emailController.text);
         } else {
@@ -58,7 +62,7 @@ class AuthController extends GetxController {
         }
 
         isLoading.value = false;
-        Get.offAllNamed(AppRoutes.home); 
+        Get.offAllNamed(AppRoutes.home);
       },
     );
   }

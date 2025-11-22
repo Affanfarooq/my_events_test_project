@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart'; // For kDebugMode
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:my_events_test_project/app/services/logging_service.dart';
 
@@ -11,13 +11,11 @@ class DioLoggingInterceptor extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (kDebugMode) {
       final String emoji = '🚀'; 
-      _logger.log(''); // Empty line for spacing
+      _logger.log(''); 
       _logger.log('$emoji ---------------- REQUEST ---------------- $emoji');
       _logger.log('$emoji METHOD: ${options.method}');
       _logger.log('$emoji URL:    ${options.uri}');
       
-      // Headers (Optional: Comment out if too noisy)
-      // _logger.log('$emoji HEADERS: ${options.headers}');
 
       if (options.data != null) {
         _logger.log('$emoji BODY:');
@@ -64,13 +62,11 @@ class DioLoggingInterceptor extends Interceptor {
     super.onError(err, handler);
   }
 
-  // Helper to make JSON readable
   void _printPrettyJson(dynamic data) {
     try {
       if (data is Map || data is List) {
         var encoder = const JsonEncoder.withIndent('  ');
         String prettyPrint = encoder.convert(data);
-        // Split lines to avoid truncation in some consoles
         prettyPrint.split('\n').forEach((line) => _logger.log(line));
       } else {
         _logger.log(data.toString());

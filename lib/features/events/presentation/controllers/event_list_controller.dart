@@ -8,10 +8,9 @@ import 'package:my_events_test_project/features/events/domain/repositories/event
 class EventListController extends GetxController {
   final EventRepository _repository = Get.find<EventRepository>();
   final StorageService _storage = Get.find<StorageService>();
-
   var events = <EventEntity>[].obs;
-  var isLoading = true.obs;
-  var isMoreLoading = false.obs;
+  var isLoading = true.obs;     
+  var isMoreLoading = false.obs; 
   int _page = 1;
   final int _limit = 10;
   bool _hasMore = true;
@@ -21,10 +20,8 @@ class EventListController extends GetxController {
   void onInit() {
     super.onInit();
     fetchEvents();
-
     scrollController.addListener(() {
-      if (scrollController.position.pixels ==
-              scrollController.position.maxScrollExtent &&
+      if (scrollController.position.pixels == scrollController.position.maxScrollExtent &&
           !isMoreLoading.value &&
           _hasMore) {
         loadMoreEvents();
@@ -47,6 +44,7 @@ class EventListController extends GetxController {
       (data) {
         events.value = data;
         isLoading.value = false;
+        // If data received is less than limit, we've reached the end
         if (data.length < _limit) _hasMore = false;
       },
     );
@@ -67,7 +65,7 @@ class EventListController extends GetxController {
         if (data.isEmpty) {
           _hasMore = false;
         } else {
-          events.addAll(data);
+          events.addAll(data); // Append new data to existing list
           if (data.length < _limit) _hasMore = false;
         }
         isMoreLoading.value = false;
@@ -83,7 +81,7 @@ class EventListController extends GetxController {
     final index = events.indexWhere((e) => e.id == updatedEvent.id);
     if (index != -1) {
       events[index] = updatedEvent;
-      events.refresh();
+      events.refresh(); // Notify UI of specific item change
     }
   }
 

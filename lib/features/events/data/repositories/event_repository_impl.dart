@@ -7,6 +7,7 @@ import 'package:my_events_test_project/features/events/data/models/event_model.d
 import 'package:my_events_test_project/features/events/domain/entities/event_entity.dart';
 import 'package:my_events_test_project/features/events/domain/repositories/event_repository.dart';
 
+/// Repository implementation that decides between Remote (API) and Local (Cache) data.
 class EventRepositoryImpl implements EventRepository {
   final EventRemoteDataSource remoteDataSource;
   final EventLocalDataSource localDataSource;
@@ -23,9 +24,12 @@ class EventRepositoryImpl implements EventRepository {
     int page = 1,
     int limit = 10,
   }) async {
+    // Check network connection first
     if (await networkInfo.isConnected) {
       try {
         final remoteEvents = await remoteDataSource.getEvents(page, limit);
+        
+        // Cache only the first page for faster offline startup
         if (page == 1) {
           await localDataSource.cacheEvents(remoteEvents);
         }
@@ -34,6 +38,7 @@ class EventRepositoryImpl implements EventRepository {
         return Left(ServerFailure(e.toString()));
       }
     } else {
+      // Offline Mode: Fetch from Hive cache
       try {
         final localEvents = await localDataSource.getCachedEvents();
         if (localEvents.isEmpty) {
@@ -56,6 +61,7 @@ class EventRepositoryImpl implements EventRepository {
         return Left(ServerFailure(e.toString()));
       }
     } else {
+      // Offline Mode: Search by ID in local storage
       try {
         final localEvent = await localDataSource.getCachedEventById(id);
         if (localEvent != null) {
@@ -83,11 +89,11 @@ class EventRepositoryImpl implements EventRepository {
         location: event.location,
         imageUrl: event.imageUrl,
         price: event.price,
-        attendeeCount: event.attendeeCount, 
-        isFavorite: event.isFavorite,       
-        organizerName: event.organizerName, 
-        latitude: event.latitude,           
-        longitude: event.longitude,         
+        attendeeCount: event.attendeeCount,
+        isFavorite: event.isFavorite,
+        organizerName: event.organizerName,
+        latitude: event.latitude,
+        longitude: event.longitude,
       );
 
       final result = await remoteDataSource.createEvent(eventModel);
@@ -111,11 +117,11 @@ class EventRepositoryImpl implements EventRepository {
         location: event.location,
         imageUrl: event.imageUrl,
         price: event.price,
-        attendeeCount: event.attendeeCount, 
-        isFavorite: event.isFavorite,       
-        organizerName: event.organizerName, 
-        latitude: event.latitude,           
-        longitude: event.longitude,         
+        attendeeCount: event.attendeeCount,
+        isFavorite: event.isFavorite,
+        organizerName: event.organizerName,
+        latitude: event.latitude,
+        longitude: event.longitude,
       );
 
       final result = await remoteDataSource.updateEvent(eventModel);

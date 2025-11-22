@@ -7,7 +7,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_events_test_project/app/core/network/dio_logging_interceptor.dart';
 import 'package:my_events_test_project/app/core/network/network_controller.dart';
 import 'package:my_events_test_project/app/core/network/network_info.dart';
-import 'package:my_events_test_project/app/services/analytics_service.dart';
 import 'package:my_events_test_project/app/services/logging_service.dart';
 import 'package:my_events_test_project/app/services/storage_service.dart';
 import 'package:my_events_test_project/features/auth/data/datasources/auth_remote_datasource.dart';
@@ -23,7 +22,6 @@ Future<void> init() async {
   await Hive.initFlutter();
   Hive.registerAdapter(EventModelAdapter());
   Get.lazyPut(() => LoggingService());
-  Get.lazyPut(() => AnalyticsService());
   
   final reqresBaseUrl = dotenv.env['REQRES_BASE_URL'];
   print('🔍 DEBUG: Loaded ReqRes URL: $reqresBaseUrl'); 
