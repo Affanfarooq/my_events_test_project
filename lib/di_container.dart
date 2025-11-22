@@ -28,9 +28,9 @@ Future<void> init() async {
   final String validReqResUrl = reqresBaseUrl ?? 'https://reqres.in/api';
   
   Get.put(const FlutterSecureStorage());
-  Get.lazyPut(() => StorageService());
-  Get.lazyPut(() => Connectivity());
-  Get.lazyPut<NetworkInfo>(() => NetworkInfoImpl(Get.find()));
+  Get.lazyPut(() => StorageService(),fenix: true,);
+  Get.lazyPut(() => Connectivity(),fenix: true,);
+  Get.lazyPut<NetworkInfo>(() => NetworkInfoImpl(Get.find()),fenix: true,);
   Get.put(NetworkController());
 
   // --- Networking 
@@ -67,9 +67,11 @@ Future<void> init() async {
   Get.lazyPut<AuthRepository>(() => AuthRepositoryImpl(remoteDataSource: Get.find()),fenix: true,);
 
   // --- Feature: Events ---
-  Get.lazyPut<EventRemoteDataSource>(() => EventRemoteDataSourceImpl());
-  Get.lazyPut<EventLocalDataSource>(() => EventLocalDataSourceImpl());
-  Get.lazyPut<EventRepository>(() => EventRepositoryImpl(remoteDataSource: Get.find(),
+  Get.lazyPut<EventRemoteDataSource>(() => EventRemoteDataSourceImpl(),fenix: true,);
+  Get.lazyPut<EventLocalDataSource>(() => EventLocalDataSourceImpl(),fenix: true,);
+  Get.lazyPut<EventRepository>(() => EventRepositoryImpl(
+        remoteDataSource: Get.find(),
         localDataSource: Get.find(),
-        networkInfo: Get.find(),),fenix: true,);
+        networkInfo: Get.find(),),
+        fenix: true,);
 }
