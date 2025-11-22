@@ -10,7 +10,6 @@ class AuthScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(AuthController());
     final theme = Theme.of(context);
-    final h = MediaQuery.of(context).size.height;
     final w = MediaQuery.of(context).size.width;
 
     return Scaffold(

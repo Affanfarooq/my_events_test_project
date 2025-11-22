@@ -59,11 +59,13 @@ To run tests:
 flutter test
 
 
+
 ##  Notes for Reviewer
 **Map Implementation:** Due to time constraints and API key requirements, the map view uses a high-quality static image placeholder with a functional "Open in Maps" intent.
 *Image Upload:** Since MockAPI does not support file storage, image upload is simulated in the Data Source (returns a random Picsum URL).
 **Multiple Images:** The requirement specified multiple image attachments. However, due to the constraints of the MockAPI schema and to focus on core architecture quality within the deadline, I implemented a **Single Cover Image** flow.
 **Optimistic UI:** The app uses optimistic updates for Create/Edit events to make the UI feel instant, syncing with the API in the background.
+
 
 
 ##  Test Credentials (Mock Data)
@@ -77,7 +79,6 @@ flutter test
 * **Note:** The ReqRes Mock API only allows successful registration for specific pre-defined users.
 * To simulate a **successful Sign Up**, please use the **same email** as login (`eve.holt@reqres.in`).
 * Using random emails will result in a `400 Error` from the API (this is a limitation of the mock service, not the app).
-
 
 
 

@@ -63,13 +63,13 @@ Future<void> init() async {
   // --- Features ---
 
   // Auth Feature
-  Get.lazyPut<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl());
-  Get.lazyPut<AuthRepository>(() => AuthRepositoryImpl(remoteDataSource: Get.find()));
+  Get.lazyPut<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl(),fenix: true,);
+  Get.lazyPut<AuthRepository>(() => AuthRepositoryImpl(remoteDataSource: Get.find()),fenix: true,);
 
   // --- Feature: Events ---
   Get.lazyPut<EventRemoteDataSource>(() => EventRemoteDataSourceImpl());
   Get.lazyPut<EventLocalDataSource>(() => EventLocalDataSourceImpl());
   Get.lazyPut<EventRepository>(() => EventRepositoryImpl(remoteDataSource: Get.find(),
         localDataSource: Get.find(),
-        networkInfo: Get.find(),));
+        networkInfo: Get.find(),),fenix: true,);
 }
