@@ -50,9 +50,7 @@ class AuthController extends GetxController {
             backgroundColor: Colors.red.withOpacity(0.1), colorText: Colors.red);
       },
       (token) async {
-        // Success Handling
         await _storageService.saveAuthToken(token);
-        
         if (rememberMe.value) {
           await _storageService.saveRememberMeEmail(emailController.text);
         } else {

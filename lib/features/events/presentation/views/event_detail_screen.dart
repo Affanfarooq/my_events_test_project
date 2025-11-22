@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:my_events_test_project/app/core/utils/offline_banner.dart';
 import 'package:my_events_test_project/app/navigation/app_routes.dart';
 import 'package:my_events_test_project/features/events/presentation/controllers/event_detail_controller.dart';
+import 'package:my_events_test_project/features/events/presentation/widgets/event_detail_skeleton.dart';
 
 class EventDetailScreen extends StatelessWidget {
   const EventDetailScreen({super.key});
@@ -19,7 +20,7 @@ class EventDetailScreen extends StatelessWidget {
     return Scaffold(
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const EventDetailSkeleton();
         }
         if (controller.event.value == null) {
           return const Center(child: Text("Event not found"));
@@ -177,14 +178,10 @@ class EventDetailScreen extends StatelessWidget {
                             _buildSectionTitle(context, "Organizer"),
                             const SizedBox(height: 20),
                             Container(
-                              padding: const EdgeInsets.all(
-                                16,
-                              ), 
+                              padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 color: theme.cardColor,
-                                borderRadius: BorderRadius.circular(
-                                  24,
-                                ),
+                                borderRadius: BorderRadius.circular(24),
                                 border: Border.all(
                                   color: theme.dividerColor.withOpacity(0.2),
                                 ),
@@ -200,9 +197,7 @@ class EventDetailScreen extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Container(
-                                    padding: const EdgeInsets.all(
-                                      10,
-                                    ),
+                                    padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
 
@@ -210,11 +205,8 @@ class EventDetailScreen extends StatelessWidget {
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                         colors: [
-                                          Colors
-                                              .blue, 
-                                          Colors.blue.withOpacity(
-                                            0.6,
-                                          ), 
+                                          Colors.blue,
+                                          Colors.blue.withOpacity(0.6),
                                         ],
                                         stops: const [0.3, 1.0],
                                       ),
@@ -223,12 +215,9 @@ class EventDetailScreen extends StatelessWidget {
                                         BoxShadow(
                                           color: theme.primaryColor.withOpacity(
                                             0.4,
-                                          ), 
+                                          ),
                                           blurRadius: 12,
-                                          offset: const Offset(
-                                            0,
-                                            6,
-                                          ), 
+                                          offset: const Offset(0, 6),
                                           spreadRadius: 0,
                                         ),
                                       ],
@@ -287,10 +276,10 @@ class EventDetailScreen extends StatelessWidget {
                                     child: Padding(
                                       padding: const EdgeInsets.all(10),
                                       child: Icon(
-                                          Icons.phone,
-                                          color: Colors.white,
-                                          size: 24,
-                                        ),
+                                        Icons.phone,
+                                        color: Colors.white,
+                                        size: 24,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -362,34 +351,138 @@ class EventDetailScreen extends StatelessWidget {
                             const SizedBox(height: 24),
 
                             _buildSectionTitle(context, "Location Map"),
-                            const SizedBox(height: 12),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                height: 180,
-                                width: double.infinity,
-                                color:
-                                    theme.colorScheme.surfaceContainerHighest,
-                                child: Stack(
-                                  children: [
-                                    Image.network(
-                                      "https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${event.longitude},${event.latitude},14,0/600x300?access_token=YOUR_KEY",
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) => Center(),
-                                    ),
-                                    Center(
-                                      child: Icon(
-                                        Icons.location_on,
-                                        size: 40,
-                                        color: Colors.green,
+                            const SizedBox(height: 20),
+                            GestureDetector(
+                              onTap: () {
+                                Get.snackbar(
+                                  "Open Map",
+                                  "Opening coordinates: ${event.latitude}, ${event.longitude}",
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: theme.cardColor,
+                                  colorText: theme.textTheme.bodyLarge?.color,
+                                );
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  height: 180,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: theme
+                                        .colorScheme
+                                        .surfaceContainerHighest,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: theme.dividerColor.withOpacity(
+                                        0.1,
                                       ),
                                     ),
-                                  ],
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.05),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Stack(
+                                    fit: StackFit.expand,
+                                    children: [
+                                      Image.network(
+                                        "https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=800&auto=format&fit=crop",
+                                        fit: BoxFit.cover,
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                              if (loadingProgress == null)
+                                                return child;
+                                              return Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      color: theme.primaryColor,
+                                                    ),
+                                              );
+                                            },
+                                        errorBuilder: (_, __, ___) =>
+                                            Container(color: Colors.grey[300]),
+                                      ),
+
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Colors.transparent,
+                                              Colors.black.withOpacity(0.3),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+
+                                      Center(
+                                        child: Icon(
+                                          Icons.location_on,
+                                          size: 48,
+                                          color: theme.primaryColor,
+                                          shadows: const [
+                                            Shadow(
+                                              color: Colors.black26,
+                                              blurRadius: 10,
+                                              offset: Offset(0, 4),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      Positioned(
+                                        bottom: 12,
+                                        right: 12,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 8,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withOpacity(
+                                                  0.1,
+                                                ),
+                                                blurRadius: 8,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                "Open in Maps",
+                                                style: TextStyle(
+                                                  color: theme.primaryColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Icon(
+                                                Icons.open_in_new,
+                                                size: 14,
+                                                color: theme.primaryColor,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-
                             SizedBox(height: h * 0.12),
                           ],
                         ),
@@ -505,17 +598,15 @@ class EventDetailScreen extends StatelessWidget {
 
           const SizedBox(width: 16),
 
-
           Expanded(
             child: Text(
               text,
               style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w600, 
-                height: 1.2, 
+                fontWeight: FontWeight.w600,
+                height: 1.2,
               ),
             ),
           ),
-
         ],
       ),
     );
