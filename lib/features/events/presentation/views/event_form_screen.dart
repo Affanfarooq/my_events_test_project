@@ -329,7 +329,7 @@ class EventFormScreen extends StatelessWidget {
         fillColor: theme.cardColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -337,7 +337,7 @@ class EventFormScreen extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: theme.primaryColor),
+          borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 20,
