@@ -56,6 +56,22 @@ flutter test
 
 
 
+
+##  Test Credentials (Mock Data)
+The app uses **ReqRes.in** for authentication mocking. Please use the following credentials:
+
+**Login:**
+* **Email:** `eve.holt@reqres.in`
+* **Password:** `cityslicka` (or any password)
+
+**Sign Up (Important):**
+* **Note:** The ReqRes Mock API only allows successful registration for specific pre-defined users.
+* To simulate a **successful Sign Up**, please use the **same email** as login (`eve.holt@reqres.in`).
+* Using random emails will result in a `400 Error` from the API (this is a limitation of the mock service, not the app).
+
+
+
+
 ##  AI & Tools Disclosure
 * In compliance with the task requirements, the following AI tools and resources were utilized to assist in development:
 * **Google Gemini:** Used as a pair programmer for:
@@ -64,6 +80,8 @@ flutter test
     * Refining UI aesthetics (Gradients and Shadow configurations).
 * **MockAPI.io:** Used to host the custom REST API for Events (CRUD operations).
 * **ReqRes.in:** Used as the mock authentication provider.
+
+
 
 
 ##  Notes for Reviewer

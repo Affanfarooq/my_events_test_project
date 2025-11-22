@@ -30,8 +30,8 @@ class AuthController extends GetxController {
   }
 
   /// Switches between Login and Signup modes.
-  void toggleMode() {
-    isLoginMode.value = !isLoginMode.value;
+  void toggleMode(bool isLogin) {
+    isLoginMode.value = isLogin;
     formKey.currentState?.reset(); 
   }
 
